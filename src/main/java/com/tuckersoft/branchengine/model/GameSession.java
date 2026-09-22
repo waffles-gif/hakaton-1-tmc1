@@ -1,5 +1,4 @@
 package com.tuckersoft.branchengine.model;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -47,7 +46,7 @@ public class GameSession {
     private Integer controlLevel = 0;
 
     @Column(nullable = false, length = 20)
-    private String status = PlaythroughStatus.ACTIVA;
+    private String status = PlaythroughStatus.ACTIVA; // O "ACTIVE" según tu enum/constante
 
     private String endingCode;
 
@@ -56,4 +55,11 @@ public class GameSession {
 
     @Column(nullable = false)
     private Instant updatedAt;
+
+    // --- AGREGADO PARA EL DECISION SERVICE ---
+
+    // Obtiene el email del usuario asociado para los envíos de correo
+    public String getPlayerEmail() {
+        return user != null ? user.getEmail() : null;
+    }
 }

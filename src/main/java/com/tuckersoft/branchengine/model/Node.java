@@ -1,5 +1,4 @@
 package com.tuckersoft.branchengine.model;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -46,4 +45,20 @@ public class Node {
 
     @Column(nullable = false)
     private Instant createdAt;
+
+    // --- AGREGADO PARA EL CHECKPOINT ★4 / DECISION SERVICE ---
+
+    // Indica si el nodo es final/terminal
+    @Column(nullable = false)
+    private boolean terminal = false;
+
+    // Helper getter para responder a isTerminal() si Lombok genera getTerminal()
+    public boolean isTerminal() {
+        return terminal;
+    }
+
+    // Helper getter si algún servicio llama a getCode()
+    public String getCode() {
+        return nodeCode;
+    }
 }
