@@ -11,6 +11,7 @@ import com.tuckersoft.branchengine.model.GameSession;
 import com.tuckersoft.branchengine.model.Node;
 import com.tuckersoft.branchengine.model.PlaythroughStatus;
 import com.tuckersoft.branchengine.model.User;
+import com.tuckersoft.branchengine.repository.DecisionRepository;
 import com.tuckersoft.branchengine.repository.GameSessionRepository;
 import com.tuckersoft.branchengine.repository.UserRepository;
 
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -27,12 +27,14 @@ public class GameSessionService {
     private final GameSessionRepository gameSessionRepository;
     private final UserRepository userRepository;
     private final NodeService nodeService;
+    private final DecisionRepository decisionRepository;
 
     public GameSessionService(GameSessionRepository gameSessionRepository, UserRepository userRepository,
-                               NodeService nodeService) {
+                               NodeService nodeService, DecisionRepository decisionRepository) {
         this.gameSessionRepository = gameSessionRepository;
         this.userRepository = userRepository;
         this.nodeService = nodeService;
+        this.decisionRepository = decisionRepository;
     }
 
     @Transactional
@@ -83,8 +85,14 @@ public class GameSessionService {
     @Transactional(readOnly = true)
     public PlaythroughPathResponse getPath(Long id, String requesterEmail, boolean isAdmin) {
         GameSession session = findOwnedOrThrow(id, requesterEmail, isAdmin);
-        // Persona 3: reemplazar por los pasos reales cuando exista DecisionRepository (resolvedNodeCode no nulo, orden ascendente por createdAt).
-        List<PlaythroughPathResponse.Step> steps = Collections.emptyList();
+        var decisions = decisionRepository.findByPlaythroughIdAndResolvedNodeCodeIsNotNullOrderByCreatedAtAsc(id);
+        List<PlaythroughPathResponse.Step> steps = new java.util.ArrayList<>();
+        int order = 1;
+        for (var decision : decisions) {
+            steps.add(new PlaythroughPathResponse.Step(order++, decision.getId(), decision.getNode().getNodeCode(),
+                    decision.getResolvedNodeCode(), decision.getBranchType(), decision.getImpactLevel(),
+                    decision.getCreatedAt()));
+        }
         return new PlaythroughPathResponse(session.getId(), session.getPlayerTag(), session.getStatus(),
                 session.getEndingCode(), session.getStartNodeCode(), session.getCurrentNode().getNodeCode(), steps);
     }

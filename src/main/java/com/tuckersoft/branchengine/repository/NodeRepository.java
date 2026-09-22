@@ -15,7 +15,7 @@ public interface NodeRepository extends JpaRepository<Node, Long> {
 
     boolean existsByNodeCode(String nodeCode);
 
-    @Query("SELECT n FROM Node n WHERE n.id = :sourceNode AND n.code = :outcomeCode")
+    @Query("SELECT n FROM Node n WHERE n.id = :sourceNode AND n.nodeCode = :outcomeCode")
     Optional<Node> findBySourceNodeAndOutcomeCode(@Param("sourceNode") Node sourceNode,
                                                   @Param("outcomeCode") String outcomeCode);
 }

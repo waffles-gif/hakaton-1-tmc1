@@ -1,40 +1,49 @@
 package com.tuckersoft.branchengine.model;
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.Instant;
 
 @Entity
 @Table(name = "reality_logs")
+@Getter
+@Setter
+@NoArgsConstructor
 public class RealityLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "decision_id", nullable = false)
+    private Decision decision;
+
     @Column(nullable = false)
-    private Long gameSessionId;
+    private String recipientEmail;
 
-    private Integer lucidityDelta;
-    private Integer controlLevelDelta;
-    private String outcomeCode;
+    @Column(nullable = false)
+    private String subject;
 
-    private LocalDateTime loggedAt;
+    @Column(nullable = false, length = 20)
+    private String logStatus;
 
-    @PrePersist
-    public void prePersist() {
-        this.loggedAt = LocalDateTime.now();
-    }
+    @Column(columnDefinition = "TEXT")
+    private String errorMessage;
 
-    // Getters y Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public Long getGameSessionId() { return gameSessionId; }
-    public void setGameSessionId(Long gameSessionId) { this.gameSessionId = gameSessionId; }
-    public Integer getLucidityDelta() { return lucidityDelta; }
-    public void setLucidityDelta(Integer lucidityDelta) { this.lucidityDelta = lucidityDelta; }
-    public Integer getControlLevelDelta() { return controlLevelDelta; }
-    public void setControlLevelDelta(Integer controlLevelDelta) { this.controlLevelDelta = controlLevelDelta; }
-    public String getOutcomeCode() { return outcomeCode; }
-    public void setOutcomeCode(String outcomeCode) { this.outcomeCode = outcomeCode; }
-    public LocalDateTime getLoggedAt() { return loggedAt; }
-    public void setLoggedAt(LocalDateTime loggedAt) { this.loggedAt = loggedAt; }
+    private Instant sentAt;
+
+    @Column(nullable = false)
+    private Instant createdAt;
 }
