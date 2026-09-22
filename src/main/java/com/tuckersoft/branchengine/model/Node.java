@@ -1,0 +1,49 @@
+package com.tuckersoft.branchengine.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.Instant;
+
+@Entity
+@Table(name = "story_nodes")
+@Getter
+@Setter
+@NoArgsConstructor
+public class Node {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true, length = 40)
+    private String nodeCode;
+
+    @Column(nullable = false, length = 80)
+    private String title;
+
+    @Lob
+    @Column(nullable = false)
+    private String sceneText;
+
+    @Column(nullable = false)
+    private Integer branchCapacity;
+
+    @Column(nullable = false)
+    private Integer currentBranches = 0;
+
+    private String primaryBranchCode;
+
+    private String glitchBranchCode;
+
+    @Column(nullable = false)
+    private Instant createdAt;
+}
